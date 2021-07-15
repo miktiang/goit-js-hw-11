@@ -13,43 +13,43 @@ const refs = {
 refs.choosedDate.addEventListener('change', isDateChoosed)
 refs.startBtn.style.display = 'none';
 
-function isDateChoosed() {
+function updateTimer(time) {
+    const targetTime = convertMs(time);
+    refs.days.textContent = targetTime.days;
+    refs.hours.textContent = targetTime.hours;
+    refs.minutes.textContent = targetTime.minutes;
+    refs.seconds.textContent = targetTime.seconds;
+    }
+    
+    function isDateChoosed() {
     const input = this.value;
     const dateEntered = new Date(input);
     const currentDate = Date.now();
     let time = dateEntered - currentDate;
     if (time < 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please choose a date in the future',
-        })
-        return
+    Swal.fire({
+    icon: 'error',
+    title: 'Oops...',
+    text: 'Please choose a date in the future',
+    });
+    return;
     }
     refs.startBtn.style.display = 'block';
-    let targetTime = convertMs(time);
-    refs.days.textContent = targetTime.days;
-    refs.hours.textContent = targetTime.hours;
-    refs.minutes.textContent = targetTime.minutes;
-    refs.seconds.textContent = targetTime.seconds;
-    refs.startBtn.addEventListener('click', startCounter)
+    updateTimer(time);
+    refs.startBtn.addEventListener('click', startCounter);
     function startCounter() {
-        const intervalId = setInterval(() => {
-            time -= 1000;
-            targetTime = convertMs(time);
-            refs.days.textContent = targetTime.days;
-            refs.hours.textContent = targetTime.hours;
-            refs.minutes.textContent = targetTime.minutes;
-            refs.seconds.textContent = targetTime.seconds;
-            if (time < 1000) {
-                clearInterval(intervalId);
-            }
-        }, 1000);
-        refs.startBtn.removeEventListener('click', startCounter)
-        refs.startBtn.disabled = true;
+    const intervalId = setInterval(() => {
+    time -= 1000;
+    updateTimer(time);
+    if (time < 1000) {
+    clearInterval(intervalId);
+    }
+    }, 1000);
+    refs.startBtn.removeEventListener('click', startCounter);
+    refs.startBtn.disabled = true;
     }
     refs.choosedDate.style.display = 'none';
-}
+    }
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
